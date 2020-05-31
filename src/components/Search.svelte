@@ -12,7 +12,7 @@
 		
 	async function handleSubmit(e) {
 		e.preventDefault();
-		await fetch(withQuery('http://api.openweathermap.org/data/2.5/weather', {
+		await fetch(withQuery('https://api.openweathermap.org/data/2.5/weather', {
 			q: formData.city,
 			units: 'imperial',
 			appid: '271d1234d3f497eed5b1d80a07b3fcd1',
