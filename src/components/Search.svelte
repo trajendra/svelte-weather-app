@@ -1,61 +1,62 @@
 <script>
-	import withQuery from "with-query"
-	import Card from "./Card.svelte";
-	import Button from "./UI/Button.svelte";
-	import Inputbar from "./UI/Inputbar.svelte";
-	export let result = "";
-	export let formData = {
-    	city: "",
-  	};
+ import withQuery from "with-query"
+ import Card from "./Card.svelte";
+ import Button from "./UI/Button.svelte";
+ import Inputbar from "./UI/Inputbar.svelte";
+ 
+ export let result = "";
+ export let city = "";
   
-  	let searchitems = [];
-		
-	async function handleSubmit(e) {
-		e.preventDefault();
-		await fetch(withQuery('https://api.openweathermap.org/data/2.5/weather', {
-			q: formData.city,
-			units: 'imperial',
-			appid: '271d1234d3f497eed5b1d80a07b3fcd1',
-		}))
-		.then(resp => resp.json())
-		.then(data => (result = data));
+ let searchitems = [];
+ let url ="";
+ const cache = new Map();
+
+ async function handleSubmit(e) {
+	e.preventDefault();
+	
+	url = withQuery('https://api.openweathermap.org/data/2.5/weather', {
+		q: city,
+		units: 'imperial',
+		appid: '271d1234d3f497eed5b1d80a07b3fcd1', //YOUR_API_KEY
+	 })
+
+	if(cache.has(url)){
+			alert("City already exists!")
+	 } 
+	else{
+   
+		await fetch(url)
+			.then(resp => resp.json())
+			.then(data => (result = data));
 
 		const newSearchitem = {
 			id: Math.random().toString(),
+			city: result["name"],
 			temp: result["main"]["temp"],
 			icon: result["weather"][0]["icon"],
-			...formData
-		};
+	     };
 
 		searchitems = [...searchitems, newSearchitem];
-
-	}
-
-	function formHandler(event) {
-		formData[event.target.name] = event.target.value;	
-	}
-
+		cache.set(url);
+     }
+}
 </script>
-<main>
 
+<main>
 	<form on:submit={handleSubmit}>
-		<Inputbar bind:value={formData.city} on:input={formHandler} />
+		<Inputbar bind:value={city} />
 		<Button type="submit" caption="Search" />
 	</form>
 	<section id="searchitems">
 		{#each searchitems as searchitem}
 			<Card city={searchitem.city} temp={searchitem.temp} icon={searchitem.icon} />
 		{/each}
-	</section>	
-
+	</section>
 </main>
 
-
 <style>
-
- 
-  section {
- 	
+   section {
+  
     display: grid;
     grid-template-columns: 1fr;
     grid-gap: 1rem;
