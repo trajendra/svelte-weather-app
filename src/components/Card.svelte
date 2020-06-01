@@ -8,7 +8,7 @@
     <h1>{city}</h1>
     <h2>{temp} ° F</h2>
     <div class="image">
-        <img src="http://openweathermap.org/img/w/{icon}.png" alt="weathericon">
+        <img src="https://openweathermap.org/img/w/{icon}.png" alt="weathericon">
     </div>
 </card>
 
